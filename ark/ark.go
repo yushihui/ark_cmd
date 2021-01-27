@@ -12,31 +12,11 @@ import (
 	"strconv"
 )
 
-// Security record
-type Security struct {
-	Fund       string
-	Name       string
-	TickerCode string
-	Shares     float64
-	Delta      float64
-	Price      float64
-	IsNew      bool
-	Weight     float64
-}
-
-// ByValue sorter
-type ByValue []*Security
-
-func (a ByValue) Len() int           { return len(a) }
-func (a ByValue) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a ByValue) Less(i, j int) bool { return a[i].Delta*a[i].Price > a[j].Delta*a[j].Price }
-
 func fileLoc(fund, filename string) string {
 	return "data/" + fund + "/" + filename + ".csv"
 }
 
-// Diff calc delta changes
-func Diff(fund string, from string, to string) {
+func deltaChange(fund, from, to string) map[string]*Security {
 	securities := csvReadByLine(fileLoc(fund, from))
 	recordFile, err := os.Open(fileLoc(fund, to))
 	if err != nil {
@@ -77,19 +57,26 @@ func Diff(fund string, from string, to string) {
 			securities[record[4]] = &s
 		}
 	}
-	fmt.Printf("%s : from %s to %s \n", fund, from, to)
-	fmt.Printf("%-10s %-30s %20s %20s %20s\n", "Direction", "Name", "Shares", "Value", "Weight(%)")
-	values := make([]*Security, 0, len(securities))
-	for _, v := range securities {
+	for k, v := range securities {
 		if v.Delta == 0 {
-			continue
+			delete(securities, k)
 		}
-		values = append(values, v)
+
 	}
-	prettyPrint(values)
+	return securities
 }
 
-func prettyPrint(securities []*Security) {
+// FundActivity calc fund delta changes
+func FundActivity(fund string, from string, to string) {
+	securities := deltaChange(fund, from, to)
+	prettyPrint(securities)
+}
+
+func prettyPrint(securityMap map[string]*Security) {
+	securities := make([]*Security, 0, len(securityMap))
+	for _, v := range securityMap {
+		securities = append(securities, v)
+	}
 	sort.Sort(ByValue(securities))
 	var direction string
 	for _, s := range securities {
@@ -178,4 +165,24 @@ func getLatestFile(folder string) string {
 		panic(err)
 	}
 	return file
+}
+
+// AllFundsActivity  ark transaction activity
+func AllFundsActivity(from, to string) {
+	securities := make(map[string]*Security)
+	for k := range ArkFunds {
+		fundSecurities := deltaChange(k, from, to)
+		mergeTo(securities, fundSecurities)
+	}
+	prettyPrint(securities)
+}
+
+func mergeTo(target, from map[string]*Security) {
+	for k, v := range from {
+		if s, ok := target[k]; ok {
+			s.Shares += v.Shares
+		} else {
+			target[k] = v
+		}
+	}
 }
