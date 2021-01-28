@@ -73,6 +73,7 @@ func FundActivity(fund string, from string, to string) {
 }
 
 func prettyPrint(securityMap map[string]*Security) {
+	fmt.Printf("%-10s %-30s %20s %20s %20s\n", "Direction", "Name", "Shares", "Value", "Weight(%)")
 	securities := make([]*Security, 0, len(securityMap))
 	for _, v := range securityMap {
 		securities = append(securities, v)
