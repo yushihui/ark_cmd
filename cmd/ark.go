@@ -56,8 +56,8 @@ var listCmd = &cobra.Command{
 }
 
 func init() {
-	fundCmd.Flags().StringVarP(&from, "from", "f", "", "from time fotmat 2021-01-05")
-	fundCmd.Flags().StringVarP(&end, "end", "e", "", "end time fotmat 2021-01-06")
+	fundCmd.Flags().StringVarP(&from, "start", "s", "", "start date fotmat 2021-01-05")
+	fundCmd.Flags().StringVarP(&end, "end", "e", "", "end date fotmat 2021-01-06")
 	fundCmd.MarkFlagRequired("from")
 	fundCmd.MarkFlagRequired("end")
 	rootCmd.AddCommand(fundCmd)
