@@ -49,6 +49,7 @@ func someFunc() error {
 
 // Execute executes the root command.
 func Execute() error {
+	//ark.AllFundsActivity("2021-01-28", "2021-01-29")
 	return rootCmd.Execute()
 }
 

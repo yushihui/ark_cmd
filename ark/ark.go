@@ -181,7 +181,7 @@ func AllFundsActivity(from, to string) {
 func mergeTo(target, from map[string]*Security) {
 	for k, v := range from {
 		if s, ok := target[k]; ok {
-			s.Shares += v.Shares
+			s.Delta += v.Delta
 		} else {
 			target[k] = v
 		}
