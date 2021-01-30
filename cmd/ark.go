@@ -25,7 +25,7 @@ var fundCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		fund := strings.ToUpper(args[0])
 		end, _ := cmd.Flags().GetString("end")
-		from, _ := cmd.Flags().GetString("from")
+		from, _ := cmd.Flags().GetString("start")
 		if fund == "ALL" {
 			ark.AllFundsActivity(from, end)
 		} else {
