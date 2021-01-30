@@ -9,8 +9,8 @@ import (
 )
 
 var profilioCmd = &cobra.Command{
-	Use:   "profilio",
-	Short: "View fund profilio",
+	Use:   "profolio",
+	Short: "View fund profolio",
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 1 {
 			if !isValidFund(args[0]) {
