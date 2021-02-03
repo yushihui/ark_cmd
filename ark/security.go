@@ -1,5 +1,7 @@
 package ark
 
+import "time"
+
 var ArkFunds = map[string]string{
 	"ARKK": "ARK INNOVATION ~ 20+ B",
 	"ARKQ": "ARK AUTONOMOUS TECHNOLOGY & ROBOTICS ~ 2.7 B",
@@ -15,11 +17,13 @@ type Security struct {
 	Fund       string
 	Name       string
 	TickerCode string
+	Ticker     string
 	Shares     float64
 	Delta      float64
 	Price      float64
 	IsNew      bool
 	Weight     float64
+	TradDate   time.Time
 }
 
 // ByValue sorter

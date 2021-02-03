@@ -10,6 +10,8 @@ import (
 	"path/filepath"
 	"sort"
 	"strconv"
+	"strings"
+	"time"
 )
 
 func fileLoc(fund, filename string) string {
@@ -39,10 +41,13 @@ func deltaChange(fund, from, to string) map[string]*Security {
 		value, _ := strconv.ParseFloat(record[6], 64)
 		w, _ := strconv.ParseFloat(record[7], 64)
 		price := value / shares
+		layout := "1/2/2006"
+		t, _ := time.Parse(layout, record[0])
 		if s, ok := securities[record[4]]; ok {
 			s.Delta = shares - s.Shares
 			s.Price = price
 			s.Weight = w
+			s.TradDate = t
 		} else {
 			s := Security{
 				Fund:       record[1],
@@ -51,8 +56,10 @@ func deltaChange(fund, from, to string) map[string]*Security {
 				Shares:     shares,
 				Delta:      shares,
 				Price:      price,
+				Ticker:     record[3],
 				IsNew:      true,
 				Weight:     w,
+				TradDate:   t,
 			}
 			securities[record[4]] = &s
 		}
@@ -87,11 +94,12 @@ func prettyPrint(securityMap map[string]*Security) {
 		} else if s.Delta < 0 {
 			direction = "sell"
 		}
-		fmt.Printf("%-10s %-30s %20s %20s %20.2f\n", direction, s.Name, prettyNumber(s.Delta), prettyNumber(s.Delta*s.Price), s.Weight)
+		fmt.Printf("%-10s %-30s %20s %20s %20.2f\n", direction, s.Name, PrettyNumber(s.Delta), PrettyNumber(s.Delta*s.Price), s.Weight)
 	}
 }
 
-func prettyNumber(number float64) string {
+//PrettyNumber pretty
+func PrettyNumber(number float64) string {
 	n := math.Abs(number)
 	if n < 1000 {
 		return fmt.Sprintf("%.0f", number)
@@ -123,6 +131,7 @@ func csvReadByLine(file string) map[string]*Security {
 		s := Security{
 			Fund:       record[1],
 			Name:       record[2],
+			Ticker:     record[3],
 			TickerCode: record[4],
 			Shares:     shares,
 			Delta:      0,
@@ -166,6 +175,42 @@ func getLatestFile(folder string) string {
 		panic(err)
 	}
 	return file
+}
+
+func getTradHistoryFile(folder string) []string {
+	result := make([]string, 0, 5)
+	err := filepath.Walk(folder, func(path string, info os.FileInfo, err error) error {
+		if !info.IsDir() {
+			result = append(result, strings.Split(info.Name(), ".")[0])
+		}
+		return nil
+	})
+	if err != nil {
+		panic(err)
+	}
+	sort.Strings(result)
+	return result
+}
+
+// ParseFundActivity parse activities
+func ParseFundActivity(fund string, activities map[string]*[]Security) {
+	files := getTradHistoryFile("data/" + fund)
+	size := len(files)
+	for i := 1; i < size; i++ {
+		deltaChanges := deltaChange(fund, files[i-1], files[i])
+		add2Activities(activities, deltaChanges)
+	}
+}
+
+func add2Activities(activities map[string]*[]Security, deltaChanges map[string]*Security) {
+	for _, v := range deltaChanges {
+		if records, ok := activities[v.Ticker]; ok {
+			*records = append(*records, *v)
+		} else {
+			records := []Security{*v}
+			activities[v.Ticker] = &records
+		}
+	}
 }
 
 // AllFundsActivity  ark transaction activity
