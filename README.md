@@ -30,6 +30,7 @@ ark_cmd fund arkk -s 2021-01-05 -e 2021-01-06
 ```sh
 ark_cmd profolio arkk
 # get the fund arkk's current profolio
+```
 
 ### index
 ```sh
