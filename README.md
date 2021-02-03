@@ -31,3 +31,16 @@ ark_cmd fund arkk -s 2021-01-05 -e 2021-01-06
 ark_cmd profolio arkk
 # get the fund arkk's current profolio
 
+### index
+```sh
+ark_cmd index
+# build index
+```
+
+
+### ticker [ticker]
+```sh
+ark_cmd ticker TSLA
+# get all activities of Tesla
+```
+
