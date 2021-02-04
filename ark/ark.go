@@ -80,7 +80,7 @@ func FundActivity(fund string, from string, to string) {
 }
 
 func prettyPrint(securityMap map[string]*Security) {
-	fmt.Printf("%-10s %-30s %20s %20s %20s\n", "Direction", "Name", "Shares", "Value", "Weight(%)")
+	fmt.Printf("%-10s %-10s %-30s %20s %20s %20s\n", "Direction", "Ticker", "Name", "Shares", "Value", "Weight(%)")
 	securities := make([]*Security, 0, len(securityMap))
 	for _, v := range securityMap {
 		securities = append(securities, v)
@@ -94,7 +94,7 @@ func prettyPrint(securityMap map[string]*Security) {
 		} else if s.Delta < 0 {
 			direction = "sell"
 		}
-		fmt.Printf("%-10s %-30s %20s %20s %20.2f\n", direction, s.Name, PrettyNumber(s.Delta), PrettyNumber(s.Delta*s.Price), s.Weight)
+		fmt.Printf("%-10s %-10s %-30s %20s %20s %20.2f\n", direction, s.Ticker, s.Name, PrettyNumber(s.Delta), PrettyNumber(s.Delta*s.Price), s.Weight)
 	}
 }
 
