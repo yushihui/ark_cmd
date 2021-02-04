@@ -42,6 +42,7 @@ ark_cmd index
 ### ticker [ticker]
 ```sh
 ark_cmd ticker TSLA
+# make sure build index first 
 # get all activities of Tesla
 ```
 
