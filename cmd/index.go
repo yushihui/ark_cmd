@@ -4,6 +4,7 @@ import (
 	"encoding/gob"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/yushihui/ark_cmd/ark"
@@ -22,14 +23,15 @@ var tickerCmd = &cobra.Command{
 	Use:   "ticker",
 	Short: "ticker activity",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		SearchActivity(args[0])
+		searchActivity(args[0])
 		return nil
 	},
 }
 
 // SearchActivity by ticker
-func SearchActivity(ticker string) {
+func searchActivity(ticker string) {
 	if activitiesMap, err := decode(); err == nil {
+		ticker = strings.ToUpper(ticker)
 		if activities, ok := activitiesMap[ticker]; ok {
 			printActivities(*activities)
 		}
@@ -39,9 +41,9 @@ func SearchActivity(ticker string) {
 }
 
 func printActivities(activities []ark.Security) {
-	fmt.Printf("%-10s %18s %18s %20s\n", "Date", "Shares", "Value", "Fund")
+	fmt.Printf("%10s %10s %18s %18s %20s\n", "Date", "Ticker", "Shares", "Value", "Fund")
 	for _, a := range activities {
-		fmt.Printf("%4d-%02d-%02d %18s %18s %20s\n", a.TradDate.Year(), a.TradDate.Month(), a.TradDate.Day(), ark.PrettyNumber(a.Delta), ark.PrettyNumber(a.Delta*a.Price), a.Fund)
+		fmt.Printf("%4d-%02d-%02d %10s %18s %18s %20s\n", a.TradDate.Year(), a.TradDate.Month(), a.TradDate.Day(), a.Ticker, ark.PrettyNumber(a.Delta), ark.PrettyNumber(a.Delta*a.Price), a.Fund)
 	}
 }
 
