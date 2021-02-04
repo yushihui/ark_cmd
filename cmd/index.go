@@ -41,7 +41,7 @@ func searchActivity(ticker string) {
 }
 
 func printActivities(activities []ark.Security) {
-	fmt.Printf("%10s %10s %18s %18s %20s\n", "Date", "Ticker", "Shares", "Value", "Fund")
+	fmt.Printf("%-10s %10s %18s %18s %20s\n", "Date", "Ticker", "Shares", "Value", "Fund")
 	for _, a := range activities {
 		fmt.Printf("%4d-%02d-%02d %10s %18s %18s %20s\n", a.TradDate.Year(), a.TradDate.Month(), a.TradDate.Day(), a.Ticker, ark.PrettyNumber(a.Delta), ark.PrettyNumber(a.Delta*a.Price), a.Fund)
 	}
