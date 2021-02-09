@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 	"github.com/yushihui/ark_cmd/ark"
 )
@@ -23,13 +24,13 @@ var tickerCmd = &cobra.Command{
 	Use:   "ticker",
 	Short: "ticker activity",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		searchActivity(args[0])
+		SearchActivity(args[0])
 		return nil
 	},
 }
 
 // SearchActivity by ticker
-func searchActivity(ticker string) {
+func SearchActivity(ticker string) {
 	if activitiesMap, err := decode(); err == nil {
 		ticker = strings.ToUpper(ticker)
 		if activities, ok := activitiesMap[ticker]; ok {
@@ -40,10 +41,20 @@ func searchActivity(ticker string) {
 	}
 }
 
+func printNum(number float64) string {
+	if number > 0 {
+		str := color.RedString(ark.PrettyNumber(number))
+		return str
+	}
+	return color.GreenString(ark.PrettyNumber(number))
+}
+
 func printActivities(activities []ark.Security) {
-	fmt.Printf("%-10s %10s %18s %18s %18s %20s\n", "Date", "Ticker", "Shares", "Value", "Weight(%)", "Fund")
+	red := color.New(color.FgYellow).Add(color.Bold)
+	red.Printf("%-10s %10s %18s %18s %18s %20s\n", "Date", "Ticker", "Shares", "Value", "Weight(%)", "Fund")
 	for _, a := range activities {
-		fmt.Printf("%4d-%02d-%02d %10s %18s %18s %18.2f %20s\n", a.TradDate.Year(), a.TradDate.Month(), a.TradDate.Day(), a.Ticker, ark.PrettyNumber(a.Delta), ark.PrettyNumber(a.Delta*a.Price), a.Weight, a.Fund)
+		red := color.New(color.FgRed).SprintFunc()
+		fmt.Printf("%4d-%02d-%02d %10s %28s %18s %18.2f %29s\n", a.TradDate.Year(), a.TradDate.Month(), a.TradDate.Day(), a.Ticker, printNum(a.Delta), ark.PrettyNumber(a.Delta*a.Price), a.Weight, red(a.Fund))
 	}
 }
 
