@@ -43,18 +43,22 @@ func SearchActivity(ticker string) {
 
 func printNum(number float64) string {
 	if number > 0 {
-		str := color.RedString(ark.PrettyNumber(number))
+		str := color.GreenString(ark.PrettyNumber(number))
 		return str
 	}
-	return color.GreenString(ark.PrettyNumber(number))
+	return color.RedString(ark.PrettyNumber(number))
 }
 
 func printActivities(activities []ark.Security) {
 	red := color.New(color.FgYellow).Add(color.Bold)
 	red.Printf("%-10s %10s %18s %18s %18s %20s\n", "Date", "Ticker", "Shares", "Value", "Weight(%)", "Fund")
+	fund := ""
 	for _, a := range activities {
-		red := color.New(color.FgRed).SprintFunc()
-		fmt.Printf("%4d-%02d-%02d %10s %28s %18s %18.2f %29s\n", a.TradDate.Year(), a.TradDate.Month(), a.TradDate.Day(), a.Ticker, printNum(a.Delta), ark.PrettyNumber(a.Delta*a.Price), a.Weight, red(a.Fund))
+		if fund != a.Fund {
+			fund = a.Fund
+			red.Printf("%-10s %10s %18s %18s %18s %20s\n", "----", "------", "-----", "-----", "--------", "----")
+		}
+		fmt.Printf("%4d-%02d-%02d %10s %28s %18s %18.2f %20s\n", a.TradDate.Year(), a.TradDate.Month(), a.TradDate.Day(), a.Ticker, printNum(a.Delta), ark.PrettyNumber(a.Delta*a.Price), a.Weight, a.Fund)
 	}
 }
 
