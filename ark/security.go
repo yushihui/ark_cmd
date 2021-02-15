@@ -32,3 +32,8 @@ type ByValue []*Security
 func (a ByValue) Len() int           { return len(a) }
 func (a ByValue) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a ByValue) Less(i, j int) bool { return a[i].Delta*a[i].Price > a[j].Delta*a[j].Price }
+
+// Person p
+type Person struct {
+	Name string
+}
